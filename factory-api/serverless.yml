@@ -11,4 +11,4 @@ functions:
     handler: index.handler
     events:
       - httpApi: "*"
-
+    url: true

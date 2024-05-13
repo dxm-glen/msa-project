@@ -1,5 +1,5 @@
-service: msa-000-order-lambda
-frameworkVersion: "3"
+service: delivery-lambda
+frameworkVersion: '3'
 
 provider:
   name: aws
@@ -7,10 +7,10 @@ provider:
   region: ap-northeast-2
 
 functions:
-  consumer:
+  api:
     handler: index.consumer
     events:
-      - sqs: YOUR_SQS_ARN
+      - httpApi: '*'
     url: true
 
 plugins:

@@ -1,7 +1,5 @@
 # msa-project
 
-
-
 # SHOP-API-LAMBDA
 
 `npm install serverless -g`
@@ -44,8 +42,6 @@ sls deploy
         "quantity" : 5
     }
     ```
-
-
 
 # SNS
 
