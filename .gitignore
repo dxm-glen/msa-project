@@ -1,0 +1,17 @@
+.terraform
+.terraform.lock.hcl
+*.tfstate
+*.backup
+
+package-lock.json
+*.zip
+.env
+connect_data.json
+variables.tf
+
+# package directories
+node_modules
+jspm_packages
+
+# Serverless directories
+.serverless
