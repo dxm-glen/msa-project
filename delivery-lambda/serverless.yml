@@ -1,4 +1,4 @@
-service: delivery-lambda
+service: msa-000-delivery-lambda
 frameworkVersion: '3'
 
 provider:
@@ -9,9 +9,4 @@ provider:
 functions:
   api:
     handler: index.consumer
-    events:
-      - httpApi: '*'
     url: true
-
-plugins:
-  - serverless-lift

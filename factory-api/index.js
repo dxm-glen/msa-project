@@ -2,8 +2,6 @@ const serverless = require("serverless-http");
 require('dotenv').config()
 const express = require("express");
 
-const AWS = require("aws-sdk")
-
 const app = express();
 app.use(express.json());
 
@@ -24,7 +22,7 @@ app.get("/log", connectDb, async (req, res, next) => {
   }
 }
 );
-
+const callbackUrl="YOUR delivery-lambda URL"
 app.post("/log", connectDb, async (req, res, next) => {
   console.log(`받은 데이터 :  ${JSON.stringify(req.body)}`);
   const { requester, quantity, item_id, item_name, factory_id, factory_name } = req.body;
@@ -45,8 +43,6 @@ app.post("/log", connectDb, async (req, res, next) => {
   setTimeout(async () => {
     try {
       const response = await axios.post(callbackUrl, req.body);
-      console.log(`상태: ${response.status}, 보낸 후 응답: ${response.data}`);
-      console.log(`생산완료 - 물건 배송중 - 창고 데이터베이스에 수량 증가 기록 요청중`)
     } catch (error) {
       console.error('Error sending callback:', error);
     }

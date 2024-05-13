@@ -11,7 +11,3 @@ functions:
     handler: index.consumer
     events:
       - sqs: YOUR_SQS_ARN
-    url: true
-
-plugins:
-  - serverless-lift

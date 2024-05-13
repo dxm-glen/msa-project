@@ -1,4 +1,4 @@
-service: msa-040-shop-api
+service: msa-000-shop-api
 frameworkVersion: "3"
 
 provider:
@@ -9,6 +9,4 @@ provider:
 functions:
   api:
     handler: index.handler
-    events:
-      - httpApi: "*"
     url: true

@@ -9,13 +9,19 @@ const {
 } = process.env;
 
 const consumer = async (event) => {
-  for (const record of event.Records) {
-    const json = JSON.parse(record.body)
-    console.log(`도착 데이터 : ${JSON.stringify(json)}`);
-
-    const quantity = Number(json.MessageAttributeItemCnt.Value);
-    const item_id = Number(json.MessageAttributeItemId.Value);
-    try {
+  console.log(`도착 데이터 : ${event.body}`);
+  let json;
+  try {
+    json = JSON.parse(event.body);
+  } catch (error) {
+    console.error('JSON parsing error:', error);
+    return;
+  }
+  const quantity=json.quantity
+  const item_id=json.item_id
+  console.log(`quantity : ${quantity}`)
+  console.log(`item_id: ${item_id}`)
+  try {
       const connect = await mysql.createConnection({ host, user, password, database });
       const [quantity_in_db] = await connect.query(`SELECT quantity from items WHERE item_id = ${item_id};`);
       const quantity_before = quantity_in_db[0].quantity;
@@ -26,7 +32,6 @@ const consumer = async (event) => {
     } catch (e) {
       console.log(`데이터베이스 연결 오류 : ${e}`);
     }
-  }
 };
 
 module.exports = {

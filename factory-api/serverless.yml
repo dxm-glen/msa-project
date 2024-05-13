@@ -9,6 +9,5 @@ provider:
 functions:
   api:
     handler: index.handler
-    events:
-      - httpApi: "*"
     url: true
+    timeout: 300
