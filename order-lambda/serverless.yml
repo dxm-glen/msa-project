@@ -1,0 +1,16 @@
+service: msa-000-order-lambda
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: ap-northeast-2
+
+functions:
+  consumer:
+    handler: index.consumer
+    events:
+      - sqs: YOUR_SQS_ARN
+
+plugins:
+  - serverless-lift

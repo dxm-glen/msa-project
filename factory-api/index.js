@@ -3,7 +3,6 @@ require('dotenv').config()
 const express = require("express");
 
 const AWS = require("aws-sdk")
-const sns = new AWS.SNS({ region: "ap-northeast-2" })
 
 const app = express();
 app.use(express.json());
@@ -43,25 +42,16 @@ app.post("/log", connectDb, async (req, res, next) => {
   await req.conn.end();
   console.log("데이터베이스에 생산요청 기록 완료");
 
-  const now = new Date().toString()
-  const message = `생산 완료! item db에 수량 증가 요청 발송 \n메시지 작성 시각: ${now}`
-  const params = {
-    Message: message,
-    Subject: '수량 증가 요청',
-    MessageAttributes: {
-      MessageAttributeItemId: {
-        StringValue: `${item_id}`,
-        DataType: "Number",
-      },
-      MessageAttributeItemCnt: {
-        StringValue: `${quantity}`,
-        DataType: "Number",
-      }
-    },
-    TopicArn: process.env.TOPIC_ARN
-  }
-  console.log("보내는 메시지 결과물  : ", params)
-  await sns.publish(params).promise()
+  setTimeout(async () => {
+    try {
+      const response = await axios.post(callbackUrl, req.body);
+      console.log(`상태: ${response.status}, 보낸 후 응답: ${response.data}`);
+      console.log(`생산완료 - 물건 배송중 - 창고 데이터베이스에 수량 증가 기록 요청중`)
+    } catch (error) {
+      console.error('Error sending callback:', error);
+    }
+  }, 10000);
+
   return res.status(200).json({ message: `상품 : ${item_id, item_name} \n 수량 : ${quantity}, 데이터베이스 수량 증가 기록 요청중` });
 }
 );
