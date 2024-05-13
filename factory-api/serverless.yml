@@ -1,0 +1,13 @@
+service: msa-000-factory-lambda
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: ap-northeast-2
+
+functions:
+  api:
+    handler: index.handler
+    events:
+      - httpApi: "*"
