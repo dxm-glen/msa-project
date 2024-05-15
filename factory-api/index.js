@@ -22,17 +22,17 @@ app.get("/log", connectDb, async (req, res, next) => {
   }
 }
 );
-const callbackUrl="YOUR delivery-lambda URL"
+
 app.post("/log", connectDb, async (req, res, next) => {
   console.log(`받은 데이터 :  ${JSON.stringify(req.body)}`);
-  const { requester, quantity, item_id, item_name, factory_id, factory_name } = req.body;
+  const { requester, quantity, item_id, item_name, factory_id, factory_name, callback_url } = req.body;
 
   console.log("생산 시작합니다.")
   console.log("생산 품목: ", item_id, item_name)
   console.log("생산 공장: ", factory_id, factory_name)
   console.log("생산 수량: ", quantity)
   console.log("생산 요청자: ", requester)
-  console.log("생산 완료 후 item db quantity 증가 람다 주소 : ", callbackUrl)
+  console.log("생산 완료 후 item db quantity 증가 람다 주소 : ", callback_url)
 
   await req.conn.query(
     recordLog(factory_id, factory_name, item_id, item_name, quantity * 2, requester)
