@@ -19,7 +19,8 @@ const consumer = async (event) => {
       "item_id": item_id,
       "item_name": item_name,
       "factory_id": factory_id,
-      "factory_name": factory_name
+      "factory_name": factory_name,
+      "callback_url": "Delivery-lambda의 URL"
     }
     console.log(`payload : ${JSON.stringify(payload)}`);
     console.log(`factory lambda url : ${process.env.FACTORY_URL}`);
