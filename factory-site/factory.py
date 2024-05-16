@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 # API에서 데이터 가져오기
 def fetch_data():
-    url = "https://pdpklswsdfvhq5mccofnngi6ta0ohmnm.lambda-url.ap-northeast-2.on.aws/log"
+    url = ""
     response = requests.get(url)
     if response.status_code == 200:
         return response.json()
