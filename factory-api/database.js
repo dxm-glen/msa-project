@@ -18,6 +18,7 @@ const connectDb = async (req, res, next) => {
         res.status(500).json({ message: "데이터베이스 연결 오류" })
     }
 }
+
 const getLog = () => `
 SELECT * FROM logs;
 `
@@ -26,10 +27,16 @@ const recordLog = (factory_id, factory_name, item_id, item_name, quantity, reque
 INSERT INTO logs(factory_id, factory_name, item_id, item_name, quantity, requester, datetime) VALUES ('${factory_id}', '${factory_name}', '${item_id}', '${item_name}', '${quantity}', '${requester}', NOW());
 `
 
+// New function to delete a log by its ID
+const deleteLog = (id) => `
+DELETE FROM logs WHERE id = ${id};
+`
+
 module.exports = {
     connectDb,
     queries: {
         getLog,
-        recordLog
+        recordLog,
+        deleteLog
     }
 }
