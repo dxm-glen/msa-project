@@ -11,4 +11,4 @@ functions:
     handler: index.consumer
     events:
       - sqs: YOUR_SQS_ARN
-    timeout: 300
+    timeout: 600
