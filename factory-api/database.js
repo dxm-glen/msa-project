@@ -29,7 +29,7 @@ INSERT INTO logs(factory_id, factory_name, item_id, item_name, quantity, request
 
 // New function to delete a log by its ID
 const deleteLog = (id) => `
-DELETE FROM logs WHERE id = ${log_id};
+DELETE FROM logs WHERE log_id = ${id};
 `
 
 module.exports = {
