@@ -10,3 +10,4 @@ functions:
   api:
     handler: index.consumer
     url: true
+    timeout: 600
