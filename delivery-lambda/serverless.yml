@@ -1,10 +1,11 @@
-service: msa-000-delivery-lambda
+# 그룹코드와 번호에 자신의 정보로 입력 -> ex) nxt-000-delivery-lambda
+service: 그룹코드-지정받은번호-delivery-lambda
 frameworkVersion: '>=4.1.0'
 
 provider:
   name: aws
   runtime: nodejs20.x
-  region: select your region
+  region: YOUR_REGION_NAME
 
 functions:
   api:

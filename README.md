@@ -5,7 +5,6 @@
 - 서버리스 설치
   - `npm install serverless -g`
 
-
 # STEP 2 : Shop-site 구성하기
 
 - streamlit 설치
@@ -77,9 +76,9 @@
     - 람다 -> 권한 -> IAM Role 접근
     - 인라인 정책 추가
     -  SNS, publish, sns_arn 연결
-    -  포스트맨에서 구매 재시도``           {                "message": "구매 실패! 남은 재고: 0, 생산요청 진행중"             }       ``
+    -  shop-site에서 구매 재시도``    {                "message": "구매 실패! 남은 재고: 0, 생산요청 진행중"             }``
     - sqs에서 메시지 폴링으로 확인
-        ``           {               "Type" : "Notification",               "MessageId" : "SAMPLE",               "TopicArn" : "SAMPLE",               "Subject" : "Item3 재고 부족",               "Message" : "Item3 재고가 부족합니다. 제품을 생산해주세요! \n메시지 작성 시각: Mon May 13 2024 08:59:40 GMT+0000 (Coordinated Universal Time)",               "Timestamp" : "SAMPLE",               "SignatureVersion" : "1",               "Signature" : "SAMPLE",               "SigningCertURL" : "SAMPLE",               "UnsubscribeURL" : "SAMPLE",               "MessageAttributes" : {                 "MessageAttributeRequester" : {"Type":"String","Value":"tester"},                 "MessageAttributeItemCnt" : {"Type":"Number","Value":"1"},                 "MessageAttributeFactoryId" : {"Type":"Number","Value":"1"},                 "MessageAttributeFactoryName" : {"Type":"String","Value":"Factory1"},                 "MessageAttributeItemId" : {"Type":"Number","Value":"3"},                 "MessageAttributeItemName" : {"Type":"String","Value":"Item3"}               }             }       ``
+        ``    {               "Type" : "Notification",               "MessageId" : "SAMPLE",               "TopicArn" : "SAMPLE",               "Subject" : "Item3 재고 부족",               "Message" : "Item3 재고가 부족합니다. 제품을 생산해주세요! \n메시지 작성 시각: Mon May 13 2024 08:59:40 GMT+0000 (Coordinated Universal Time)",               "Timestamp" : "SAMPLE",               "SignatureVersion" : "1",               "Signature" : "SAMPLE",               "SigningCertURL" : "SAMPLE",               "UnsubscribeURL" : "SAMPLE",               "MessageAttributes" : {                 "MessageAttributeRequester" : {"Type":"String","Value":"tester"},                 "MessageAttributeItemCnt" : {"Type":"Number","Value":"1"},                 "MessageAttributeFactoryId" : {"Type":"Number","Value":"1"},                 "MessageAttributeFactoryName" : {"Type":"String","Value":"Factory1"},                 "MessageAttributeItemId" : {"Type":"Number","Value":"3"},                 "MessageAttributeItemName" : {"Type":"String","Value":"Item3"}               }             }``
 
 # STEP 5 : order-lambda 구성
 

@@ -20,14 +20,19 @@ const connectDb = async (req, res, next) => {
 }
 
 const getLog = () => `
-SELECT * FROM logs;
+SELECT * FROM logs ORDER BY datetime DESC;
 `
 
-const recordLog = (factory_id, factory_name, item_id, item_name, quantity, requester) => `
-INSERT INTO logs(factory_id, factory_name, item_id, item_name, quantity, requester, datetime) VALUES ('${factory_id}', '${factory_name}', '${item_id}', '${item_name}', '${quantity}', '${requester}', NOW());
+const recordLog = (factory_id, factory_name, item_id, item_name, quantity, requester, status) => `
+INSERT INTO logs(factory_id, factory_name, item_id, item_name, quantity, requester, datetime, status) 
+VALUES ('${factory_id}', '${factory_name}', '${item_id}', '${item_name}', '${quantity}', '${requester}', NOW(), '${status}');
 `
 
-// New function to delete a log by its ID
+const updateLogStatus = (id, status) => `
+UPDATE logs SET status = '${status}' WHERE log_id = ${id};
+`
+
+// 기존의 deleteLog 함수는 유지합니다. 필요한 경우 사용할 수 있습니다.
 const deleteLog = (id) => `
 DELETE FROM logs WHERE log_id = ${id};
 `
@@ -37,6 +42,7 @@ module.exports = {
     queries: {
         getLog,
         recordLog,
+        updateLogStatus,
         deleteLog
     }
 }

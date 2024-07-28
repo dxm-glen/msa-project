@@ -1,10 +1,10 @@
-service: msa-000-factory-lambda
+service: nxtfactory-lambda
 frameworkVersion: '>=4.1.0'
 
 provider:
   name: aws
   runtime: nodejs20.x
-  region: select your region
+  region: YOUR_REGION_NAME
 
 functions:
   api:
