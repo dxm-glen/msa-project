@@ -6,10 +6,10 @@ import plotly.express as px
 
 # 데이터베이스 연결 정보
 DB_CONFIG = {
-    "host": "msa-factory.cdsomq8mgfd0.ap-south-1.rds.amazonaws.com",
-    "user": "admin",
-    "password": "12345678aA",
-    "database": "db_036",
+    "host": "DB_HOST",
+    "user": "DB_USER",
+    "password": "DB_PW",
+    "database": "DB_NAME",
 }
 
 
