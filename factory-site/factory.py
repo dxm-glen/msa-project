@@ -1,96 +1,124 @@
 import streamlit as st
-import requests
+import mysql.connector
 import pandas as pd
+import plotly.express as px
 from datetime import datetime, timedelta
-import pytz
 
-# API에서 데이터 가져오기
-def fetch_data():
-    url = "-"
-    response = requests.get(url)
-    if response.status_code == 200:
-        return response.json()
-    else:
-        st.error("데이터를 가져오는데 실패했습니다.")
-        return []
+# Streamlit 페이지 설정
+st.set_page_config(
+    page_title="NxtCloud 공장 관리자 대시보드", page_icon="🏭", layout="wide"
+)
 
-# 데이터 가져오기
-data = fetch_data()
+# 데이터베이스 연결 정보
+DB_HOST = "데이터베이스 호스트"
+DB_USER = "데이터베이스 유저"
+DB_PASSWORD = "데이터베이스 암호"
+DB_NAME = "데이터베이스 이름"
 
-if data:
-    # DataFrame으로 변환
-    df = pd.DataFrame(data)
 
-    # 서울 타임존 설정
-    seoul_tz = pytz.timezone('Asia/Seoul')
+# 데이터베이스 연결 함수
+def connect_to_database():
+    return mysql.connector.connect(
+        host=DB_HOST, user=DB_USER, password=DB_PASSWORD, database=DB_NAME
+    )
 
-    # datetime 형식 변환 및 타임존 설정
-    df['datetime'] = pd.to_datetime(df['datetime'], utc=True).dt.tz_convert(seoul_tz)
-    df = df.sort_values(by='datetime', ascending=False)
-    df['datetime'] = df['datetime'].dt.strftime('%Y-%m-%d %H:%M:%S')
 
-    # 최근 20개의 로그
-    recent_logs = df.head(20)
+# 데이터 가져오기 함수
+def fetch_data(conn, query):
+    return pd.read_sql(query, conn)
 
-    # 제목
-    st.header('🏭 :blue[NxtCloud - Factory] 생산 요청 로그 🏭', divider='rainbow')
 
-    st.header("최근 20개의 :blue[로그]", divider='rainbow')
-    st.dataframe(recent_logs[['requester', 'item_name', 'quantity', 'datetime']].rename(columns={
-        'requester': '요청자', 
-        'item_name': '요청 아이템 이름', 
-        'quantity': '수량', 
-        'datetime': '신청 시간'
-    }))
+# Streamlit 앱 시작
+st.title("🏭 :blue[NxtCloud 공장 관리자 대시보드]")
 
-    st.header("요청자 :blue[이름]으로 :blue[검색]", divider='rainbow')
-    requester_name = st.text_input("요청자 이름")
-    
-    if requester_name:
-        filtered_logs = df[df['requester'].str.contains(requester_name, case=False, na=False)]
-        st.dataframe(filtered_logs[['requester', 'item_name', 'quantity', 'datetime']].rename(columns={
-            'requester': '요청자', 
-            'item_name': '요청 아이템 이름', 
-            'quantity': '수량', 
-            'datetime': '신청 시간'
-        }))
-    else:
-        st.write("검색할 요청자 이름을 입력하세요.")
+# 데이터베이스 연결
+try:
+    conn = connect_to_database()
+    st.success("✅ 데이터베이스에 성공적으로 연결되었습니다.")
+except mysql.connector.Error as e:
+    st.error(f"❌ 데이터베이스 연결 오류: {e}")
+    st.stop()
 
-    # Streamlit 내장 divider 사용
-    st.divider()
+# 날짜 범위 선택
+st.header("📅 :blue[날짜] 범위 선택")
+st.divider()
 
-    # 요청 숫자가 가장 많은 요청자와 합계 수량이 가장 많은 요청자
-    col3, col4 = st.columns(2)
+col1, col2 = st.columns(2)
+with col1:
+    start_date = st.date_input("시작 날짜", datetime.now() - timedelta(days=30))
+with col2:
+    end_date = st.date_input("종료 날짜", datetime.now())
 
-    with col3:
-        st.header("요청자 별 :blue[요청 횟수]", divider='rainbow')
-        requester_count = df['requester'].value_counts().reset_index()
-        requester_count.columns = ['요청자', '요청 횟수']
+# 쿼리 실행
+query = f"""
+SELECT * FROM logs
+WHERE DATE(datetime) BETWEEN '{start_date}' AND '{end_date}'
+ORDER BY datetime
+"""
+df = fetch_data(conn, query)
 
-        # Streamlit 내장 bar_chart 이용
-        st.bar_chart(requester_count.head(10).set_index('요청자')['요청 횟수'])
+# 데이터 없을 경우 처리
+if df.empty:
+    st.warning("⚠️ 선택한 날짜 범위에 데이터가 없습니다.")
+    st.stop()
 
-    with col4:
-        st.header("요청자 별 :blue[합계 수량]", divider='rainbow')
-        requester_quantity = df.groupby('requester')['quantity'].sum().reset_index()
-        requester_quantity.columns = ['요청자', '합계 수량']
-        requester_quantity = requester_quantity.sort_values(by='합계 수량', ascending=False)
+# 기본 통계 표시
+st.header("📊 기본 :blue[통계]", divider="rainbow")
+st.divider()
 
-        # Streamlit 내장 bar_chart 이용
-        st.bar_chart(requester_quantity.head(10).set_index('요청자')['합계 수량'])
+col1, col2 = st.columns(2)
+with col1:
+    st.metric(label="📝 총 로그 수", value=len(df))
+with col2:
+    st.metric(label="📦 총 생산량", value=df["quantity"].sum())
 
-    # Streamlit 내장 divider 사용
-    st.divider()
+# 요청자별 생산량
+st.header("👥 요청자별 :blue[생산량]", divider="rainbow")
 
-    st.header("아이템 별 :blue[생산 수량]")
-    recent_logs = df.head(20).sort_values(by='datetime')
+fig_requester = px.bar(
+    df.groupby("requester")["quantity"].sum().reset_index(),
+    x="requester",
+    y="quantity",
+    title="요청자별 총 생산량",
+)
+st.plotly_chart(fig_requester)
 
-    # 데이터 피벗: 각 item_name을 컬럼으로 설정
-    pivot_data = recent_logs[recent_logs['item_name'].isin(['Item1', 'Item2', 'Item3'])].pivot(index='datetime', columns='item_name', values='quantity').fillna(0)
+# 공장별 생산량 차트
+st.header("🏭 공장별 :blue[생산량]", divider="rainbow")
+st.divider()
 
-    # 라인 차트 표시
-    st.line_chart(pivot_data)
+fig_factory = px.bar(
+    df.groupby("factory_name")["quantity"].sum().reset_index(),
+    x="factory_name",
+    y="quantity",
+    title="공장별 총 생산량",
+)
+st.plotly_chart(fig_factory)
 
-else:
-    st.write("사용 가능한 데이터가 없습니다.")
+# 상품별 생산량 차트
+st.header("🛍️상품별 :blue[ 생산량]", divider="rainbow")
+
+fig_item = px.pie(
+    df.groupby("item_name")["quantity"].sum().reset_index(),
+    names="item_name",
+    values="quantity",
+    title="상품별 생산량 비율",
+)
+st.plotly_chart(fig_item)
+
+# 시간에 따른 생산량 추이
+st.header("📈 시간에 따른 :blue[생산량 추이]", divider="rainbow")
+
+df["date"] = pd.to_datetime(df["datetime"]).dt.date
+daily_production = df.groupby("date")["quantity"].sum().reset_index()
+fig_trend = px.line(daily_production, x="date", y="quantity", title="일별 생산량 추이")
+st.plotly_chart(fig_trend)
+
+
+# 원본 데이터 표시
+st.header("📋 :blue[원본 데이터]", divider="rainbow")
+
+st.dataframe(df)
+
+# 데이터베이스 연결 종료
+conn.close()
