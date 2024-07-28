@@ -7,6 +7,8 @@ const app = express();
 app.use(express.json())
 
 const AWS = require("aws-sdk")
+
+// 사용할 리전을 입력 ex) "ap-northeast-2"
 const sns = new AWS.SNS({ region: "FILL_ME_IN" })
 
 

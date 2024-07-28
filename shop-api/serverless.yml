@@ -1,4 +1,5 @@
-service: msa-000-shop-api
+# 그룹코드와 번호에 자신의 정보로 입력 -> ex) nxt-000-shop-api
+service: 그룹코드-지정받은번호-shop-api
 frameworkVersion: '>=4.1.0'
 
 provider:
